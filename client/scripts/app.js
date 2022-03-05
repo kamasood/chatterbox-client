@@ -21,15 +21,21 @@ var App = {
 
     // TODO: Make sure the app loads data from the API
     // continually, instead of just once at the start.
+
+    setInterval(App.fetch(), 5000); // what do we want to pass as a callback function?
   },
 
   fetch: function(callback = ()=>{}) {
     Parse.readAll((data) => {
       // examine the response from the server request:
-      console.log(data);
+      // for (let message of data) {
+      //   Messages._data.push(message);
+      // }
 
-      // TODO: Use the data to update Messages and Rooms
-      // and re-render the corresponding views.
+      Messages._data = data;
+
+      MessagesView.render();
+      callback();
     });
   },
 
