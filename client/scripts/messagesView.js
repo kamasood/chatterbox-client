@@ -4,13 +4,15 @@
 var MessagesView = {
 
   $chats: $('#chats'),
+  $refreshButton: $('#refresh'),
+
 
   initialize: function() {
     // TODO: Perform any work which needs to be done
     // when this view loads.
 
     // template for event listener
-    // MessagesView.$chats.on('click', MessagesView.handleClick);
+    MessagesView.$refreshButton.on('click', MessagesView.refreshFeed);
   },
 
   render: function() {
@@ -20,20 +22,28 @@ var MessagesView = {
     MessagesView.$chats.empty();
 
     for (let i = 0; i < Messages._data.length; i++) {
-      let messageNode = MessageView.render(Messages._data[i]);
-      MessagesView.$chats.append(messageNode);
+      MessagesView.renderMessage(Messages._data[i]);
     }
   },
 
   renderMessage: function(message) {
     // TODO: Render a single message.
-
-
+    let $newMessage = $(MessageView.render(message));
+    $newMessage.on('click', MessagesView.handleClick);
+    MessagesView.$chats.append($newMessage);
   },
 
   handleClick: function(event) {
     // TODO: handle a user clicking on a message
     // (this should add the sender to the user's friend list).
+
+    let $user = $(event.currentTarget.firstChild);
+    Friends.toggleStatus($user.text());
+    // toggle clicked username in friends list
+  },
+
+  refreshFeed: function(event) {
+    App.fetch();
   }
 
 };

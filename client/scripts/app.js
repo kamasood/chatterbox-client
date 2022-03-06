@@ -22,7 +22,7 @@ var App = {
     // TODO: Make sure the app loads data from the API
     // continually, instead of just once at the start.
 
-    setInterval(App.fetch(), 5000); // what do we want to pass as a callback function?
+    setTimeout(App.fetch(), 1000); // what do we want to pass as a callback function?
   },
 
   fetch: function(callback = ()=>{}) {
@@ -32,9 +32,45 @@ var App = {
       //   Messages._data.push(message);
       // }
 
-      Messages._data = data;
+      // clear messages array
+      Messages._data = [];
 
+      // iterate through incoming data array?
+      // escape all scary characters?
+      //escaping problems in message object strings
+      // & --> &amp;
+      // < --> &lt;
+      // > --> &gt;
+      // " --> &quot;
+      // ' --> &#x27;
+      for (let message of data) {
+
+        message.username = message.username === null ? null : message.username.replaceAll('<', '&lt;');
+        message.text = message.text === null ? null : message.text.replaceAll('<', '&lt;');
+        message.roomname = message.roomname === null ? 'Main' : message.roomname.replaceAll('<', '&lt;');
+
+        message.username = message.username === null ? null : message.username.replaceAll('\'', '&lt;');
+        message.text = message.text === null ? null : message.text.replaceAll('\'', '&lt;');
+        message.roomname = message.roomname === null ? 'Main' : message.roomname.replaceAll('\'', '&lt;');
+
+        message.username = message.username === null ? null : message.username.replaceAll('(', '');
+        message.text = message.text === null ? null : message.text.replaceAll('(', '');
+        message.roomname = message.roomname === null ? 'Main' : message.roomname.replaceAll('(', '');
+
+        message.username = message.username === null ? null : message.username.replaceAll(')', '');
+        message.text = message.text === null ? null : message.text.replaceAll(')', '');
+        message.roomname = message.roomname === null ? 'Main' : message.roomname.replaceAll(')', '');
+
+        // add username to friend list
+        Friends.add(message.username);
+
+        // push to messsages._data
+        Messages._data.push(message);
+      }
+
+      RoomsView.render();
       MessagesView.render();
+
       callback();
     });
   },
